@@ -1,0 +1,82 @@
+{% extends 'search/layout/base.html' %}
+{% load template_filters %}
+{% block content%}
+<div class="container-fluid">
+
+    <form action="" method="GET">
+        <div class="row">
+            <div class="col-md-4 col-sm-4">
+                <input class="form-control" type="text" id="product" name="product" value="{% if product %}{{ product }}{% endif %}" placeholder="product"><br>
+            </div>
+            <div class="col-md-4 col-sm-4">
+                <input class="btn btn-primary" type="submit" value="Search">
+            </div>
+        </div>
+    </form>
+</div>
+<h1> Products </h1>
+<div class="container">
+       <div class="row">
+    <div class="col-md-2 col-sm-2">
+    </div>
+    <div class="col-md-10 col-sm-10">
+  <div class="row">
+
+        {% for prod in products %}
+            <div class="col-lg-4">
+                <div class="card" style="width: 18rem;">
+                <img src="{{prod.image_url}}" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">{{ prod.product_name }}</h5>
+                    <p class="card-text">{{ prod.get_vendor_display }}</p>
+                    <p class="card-text">{{ prod.price}}</p>
+                    <a href="#" class="btn btn-primary">Add to Cart</a>
+                </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    </div>
+</div>
+<div class="row">
+      <div class="col-12 mx-auto">
+        {% with 'search:product_home' as paginate_url %}
+          {% if is_paginated %}
+            <nav aria-label="Page navigation example" class="m-t-40 text-center">
+              {% if page_obj.has_other_pages %}
+                <ul class="pagination">
+                  {% if page_obj.has_previous %}
+                    <li class="page-item"><a  class="page-link" href="?{% query_replace request page=page_obj.previous_page_number %}">&laquo;</a></li>
+                  {% else %}
+                    <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                  {% endif %}
+
+                  {% if page_obj.number|add:'-4' > 1 %}
+                    <li class="page-item"><a class="page-link" href="?{% query_replace request page=page_obj.number|add:'-5' %}">&hellip;</a></li>
+                  {% endif %}
+
+                  {% for i in page_obj.paginator.page_range %}
+                    {% if page_obj.number == i %}
+                      <li class="page-item active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                    {% elif i > page_obj.number|add:'-5' and i < page_obj.number|add:'5' %}
+                      <li class="page-item"><a class="page-link" href="?{% query_replace request page=i %}">{{ i }}</a></li>
+                    {% endif %}
+                  {% endfor %}
+
+                  {% if page_obj.paginator.num_pages > page_obj.number|add:'4' %}
+                    <li class="page-item"><a class="page-link" href="?{% query_replace request page=page_obj.number|add:'5' %}">&hellip;</a></li>
+                  {% endif %}
+
+                  {% if page_obj.has_next %}
+                    <li class="page-item"><a class="page-link" href="?{% query_replace request page=page_obj.next_page_number %}">&raquo;</a></li>
+                  {% else %}
+                    <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                  {% endif %}
+                </ul>
+              {% endif %}
+            </nav>
+          {% endif %}
+        {% endwith %}
+      </div>
+    </div>
+{% endblock %}
